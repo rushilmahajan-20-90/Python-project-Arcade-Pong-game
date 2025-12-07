@@ -14,14 +14,44 @@ screen.setup(width=800,height=600)
 half_width=400#half of screen width used for paddle
 screen.bgcolor("#020417")
 
-#For sound
-sound_on=True
-screen.addshape("soundon.gif")
-screen.addshape("soundoff.gif")
-sound_icon=Turtle()
-sound_icon.penup()
-sound_icon.goto(350,250)
-sound_icon.shape("soundon.gif")
+
+# for paddle key states (initially all not pressed)
+r_up = r_down = l_up = l_down = False
+
+#for paddle movemnets
+def r_up_press():
+    global r_up
+    r_up = True
+
+def r_up_release():
+    global r_up
+    r_up = False
+
+def r_down_press():
+    global r_down
+    r_down = True
+
+def r_down_release():
+    global r_down
+    r_down = False
+
+def l_up_press():
+    global l_up
+    l_up = True
+
+def l_up_release():
+    global l_up
+    l_up = False
+
+def l_down_press():
+    global l_down
+    l_down = True
+
+def l_down_release():
+    global l_down
+    l_down = False
+
+
 
 #For Menu
 menu=Menu()
@@ -70,10 +100,18 @@ scoreboard=Scoreboard()
 
 #Paddle controlls
 screen.listen()
-screen.onkeypress(r_paddle.go_up,"Up")
-screen.onkeypress(r_paddle.go_down,"Down")
-screen.onkeypress(l_paddle.go_up,"w")
-screen.onkeypress(l_paddle.go_down,"s")
+# Right paddle
+screen.onkeypress(r_up_press, "Up")
+screen.onkeyrelease(r_up_release, "Up")
+screen.onkeypress(r_down_press, "Down")
+screen.onkeyrelease(r_down_release, "Down")
+
+# Left paddle
+screen.onkeypress(l_up_press, "w")
+screen.onkeyrelease(l_up_release, "w")
+screen.onkeypress(l_down_press, "s")
+screen.onkeyrelease(l_down_release, "s")
+
 
 
 #Updates the screen
@@ -82,10 +120,20 @@ while not game_is_on:
     
     
 while game_is_on:
-    time.sleep(ball.move_speed*0.6)
+    time.sleep(ball.move_speed * 0.6)
     screen.update()
     ball.move()
-    
+
+    # move paddles based on key states
+    if r_up:
+        r_paddle.go_up()
+    if r_down:
+        r_paddle.go_down()
+    if l_up:
+        l_paddle.go_up()
+    if l_down:
+        l_paddle.go_down()
+
 
 
 #For ball and paddle collision
@@ -133,18 +181,7 @@ while game_is_on:
         
     
 
-def toggle_sound(x,y):
-    global sound_on
-    sound_on=not sound_on
-    
-    if sound_on:
-        sound_icon.shape("soundon.gif")
-    else:
-        sound_icon.shape("soundoff.gif")
-        
-    print("Sound:", "ON" if sound_on else "OFF")
-    
-sound_icon.onclick(toggle_sound)
+
 
 
 
